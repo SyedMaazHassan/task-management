@@ -4,181 +4,168 @@
 {% include 'task/inc/head.inc.html' %}
 
     
-    <body class="sb-nav-fixed">
-        {% include 'task/inc/navbar.inc.html' %}
+<body class="sb-nav-fixed">
+    {% include 'task/inc/navbar.inc.html' %}
 
-        <div id="layoutSidenav">
-            <div id="layoutSidenav_nav">
-                {% include 'task/inc/sidebar.inc.html' %}
-            </div>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            {% include 'task/inc/sidebar.inc.html' %}
+        </div>
 
-            <div id="layoutSidenav_content" >
-                <div class="row">
-                    <div class="col-lg-12 py-4">
-                        <div class="container-fluid">
-                            {% if my_customer %}
-                                <h2 class="mt-2">{{my_customer.first_name}} {{my_customer.last_name}}  </h2>
-                            {% else %}
-                                <h2 class="mt-2">My profile</h2>
-                            {% endif %}
+        <div id="layoutSidenav_content">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="container-fluid">
+                        {% if my_customer %}
+                            <h2 class="mt-3">{{my_customer.first_name}} {{my_customer.last_name}}  </h2>
+                        {% else %}
+                            <h2 class="mt-3">My profile</h2>
+                        {% endif %}
 
-                            <div class="row">
-                                <div class="col-sm-6 py-3">
-                                    {% include 'task/inc/task-section.inc.html' %}
-                                </div>
-
-                                <div class="col-sm-6 py-3">
-
-                                    <div class="border p-3 d-flex align-items-center" style="background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
-                                        <h4 class="my-0"  style="width: 50%;">Notes list</h4>
-                                        <div class="form-group my-0 justify-content-end d-flex" style="width: 50%;">
-                                            <i class="material-icons myIcon text-primary bg-white mk-pointer ml-2 my-0" data-toggle="collapse" data-target="#new-note-form" title="Add note">note_add</i>
-                                        </div>
-                                        
-                                    </div>
-                                    
-                                    <div class="border radius-10 p-3" style="border-radius: 0px 0px 10px 10px;">
-                                        
-                                        {% for message in messages %}
-                                            {% if message.tags == 'error' %}
-                                                <div class="alert alert-success text-center" id="added-note-message" role="alert">
-                                                    {{ message }}
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
-
-
-                                        {% if not all_notes %}
-                                            <div class="alert alert-warning text-center" role="alert">
-                                                No task exists right now!
-                                            </div>
-                                        {% endif %}
-
-                                        <div class="alert text-center" id="note-main-message" style="display: none;" role="alert"></div>
-
-                                        <div class="mb-3 radius-10 collapse" id="new-note-form" style="border: solid 2px #0275d8;">
-                                            <form method="POST" id="task-form">
-                                                {% csrf_token %}
-                                                <div class="p-3 d-flex align-items-center" style="background-color: #f7f7f7; border-radius: 10px 10px 0px 0px;">
-                                                    <h5 class="my-0"  style="width: 50%;">New note</h5>
-                                                    
-                                                </div>
-
-                                                <div class="p-3" style="border-radius: 0px 0px 10px 10px;">
-                                                    <div class="row">
-                                                        <div class="col-sm-10">
-                                                            <div class="form-group my-0">
-                                                                <input class="form-control my-0" type="text" name="newNote" placeholder="Type here..." required>
-                                                            </div>
-                                                        </div>
-            
-                                                        <div class="col-sm-2">
-                                                            <button type="submit" class="btn btn-block btn-primary">Add</button>
-                                                        </div>
-            
-                                                        
-                                                    </div>
-                                                </div>
-
-                                            </form>
-
-
-                                        </div>
-                                        
-                                        
-                                        {% for note in all_notes %}
-
-                                        <div class="google-box p-3 mb-3">
-                                            <div class="d-flex align-items-center">
-                                                <h6 class="text-muted my-0" style="width: 50%;"><b>Created on:</b> {{ note.created_on.date }}</h6>
-                                                
-                                                <div style="width: 50%;" class="text-right">
-                                                    <div class="spinner-border spinner-border-sm text-primary" id="spinnernote_{{note.id}}" style="display: none;"></div>
-                                                </div>
-
-                                                <i class="material-icons myIcon text-danger mk-pointer ml-2 my-0 operation-note" id="delete_{{ note.id }}">delete</i>
-
-                                            </div>
-                                            <!-- <small>12, March 2020</small> -->
-                                            <div class="row mt-1 p-2">
-                                                
-
-                                                <div class="col-sm-12 col-12 d-flex align-items-center">
-                                                    <p class="m-0" style="font-size: 14px; line-height: 26px;">
-                                                        {{ note.note_text }}
-                                                    </p>
-                                                </div>
-                                                
-
-                                                <div class="col-sm-2 col-2 justify-content-center d-flex align-items-center">
-                                                </div>
-                                            </div>
-
-                                            {% if customer_section %}
-                                                <hr class="my-2">
-                                                <div class="text-right">
-                                                    Customer: <b>Syed Maaz Hassan</b>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-
-                                        {% endfor %}
-
-                                     
-                                        
-                                    </div>
-                                    
-                                </div>
+                        <div class="row">
+                            <div class="col-sm-6 py-3">
+                                {% include 'task/inc/task-section.inc.html' %}
                             </div>
 
-                            
-                            <!-- <ol class="breadcrumb mb-4">
-                                <li class="breadcrumb-item active">{{my_customer.first_name}}</li>
-                            
-                            </ol> -->
+                            <div class="col-sm-6 py-3">
+
+                                <div class="border p-3 d-flex align-items-center" style="background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
+                                    <h4 class="my-0"  style="width: 50%;">Notes list</h4>
+                                    <div class="form-group my-0 justify-content-end d-flex" style="width: 50%;">
+                                        <i class="material-icons myIcon text-primary bg-white mk-pointer ml-2 my-0" data-toggle="collapse" data-target="#new-note-form" title="Add note">note_add</i>
+                                    </div>
+                                    
+                                </div>
+                                
+                                <div class="border radius-10 p-3" style="border-radius: 0px 0px 10px 10px;">
+                                    
+                                    {% for message in messages %}
+                                        {% if message.tags == 'error' %}
+                                            <div class="alert alert-success text-center" id="added-note-message" role="alert">
+                                                {{ message }}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
 
 
+                                    {% if not all_notes %}
+                                        <div class="alert alert-warning text-center" role="alert">
+                                            No task exists right now!
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="alert text-center" id="note-main-message" style="display: none;" role="alert"></div>
+
+                                    <div class="mb-3 radius-10 collapse" id="new-note-form" style="border: solid 2px #0275d8;">
+                                        <form method="POST" id="task-form">
+                                            {% csrf_token %}
+                                            <div class="p-3 d-flex align-items-center" style="background-color: #f7f7f7; border-radius: 10px 10px 0px 0px;">
+                                                <h5 class="my-0"  style="width: 50%;">New note</h5>
+                                                
+                                            </div>
+
+                                            <div class="p-3" style="border-radius: 0px 0px 10px 10px;">
+                                                <div class="row">
+                                                    <div class="col-sm-10">
+                                                        <div class="form-group my-0">
+                                                            <input class="form-control my-0" type="text" name="newNote" placeholder="Type here..." required>
+                                                        </div>
+                                                    </div>
+        
+                                                    <div class="col-sm-2">
+                                                        <button type="submit" class="btn btn-block btn-primary">Add</button>
+                                                    </div>
+        
+                                                    
+                                                </div>
+                                            </div>
+
+                                        </form>
 
 
+                                    </div>
+                                    
+                                    
+                                    {% for note in all_notes %}
+
+                                    <div class="google-box p-3 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <h6 class="text-muted my-0" style="width: 50%;"><b>Created on:</b> {{ note.created_on.date }}</h6>
+                                            
+                                            <div style="width: 50%;" class="text-right">
+                                                <div class="spinner-border spinner-border-sm text-primary" id="spinnernote_{{note.id}}" style="display: none;"></div>
+                                            </div>
+
+                                            <i class="material-icons myIcon text-danger mk-pointer ml-2 my-0 operation-note" id="delete_{{ note.id }}">delete</i>
+
+                                        </div>
+                                        <!-- <small>12, March 2020</small> -->
+                                        <div class="row mt-1 p-2">
+                                            
+
+                                            <div class="col-sm-12 col-12 d-flex align-items-center">
+                                                <p class="m-0" style="font-size: 14px; line-height: 26px;">
+                                                    {{ note.note_text }}
+                                                </p>
+                                            </div>
+                                            
+
+                                            <div class="col-sm-2 col-2 justify-content-center d-flex align-items-center">
+                                            </div>
+                                        </div>
+
+                                        {% if customer_section %}
+                                            <hr class="my-2">
+                                            <div class="text-right">
+                                                Customer: <b>Syed Maaz Hassan</b>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    {% endfor %}
+
+                                    
+                                    
+                                </div>
+                                
+                            </div>
                         </div>
-                        
 
-                    
-                    
+
+
                     </div>
-               
-               
                 </div>
             </div>
-         
-            
-            <div class="modal" tabindex="-1" role="dialog" id="customerModel">
-                <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title">Add customer</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    </div>
-                    <div class="modal-body p-4">
-                        <form method="post" >
-                            {% csrf_token %}
-                            {{form | crispy}}
-                            <input type="submit" value="submit" class="btn btn-sm btn-success ">
-                        </form>
-                    
-                    
-                    </div>
-                
-                </div>
-                </div>
-            </div>
-           
         </div>
         
-        {% include 'task/inc/bottomLinks.inc.html' %}
-    </body>
+        
+        <div class="modal" tabindex="-1" role="dialog" id="customerModel">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title">Add customer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body p-4">
+                    <form method="post" >
+                        {% csrf_token %}
+                        {{form | crispy}}
+                        <input type="submit" value="submit" class="btn btn-sm btn-success ">
+                    </form>
+                
+                
+                </div>
+            
+            </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    {% include 'task/inc/bottomLinks.inc.html' %}
+</body>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
