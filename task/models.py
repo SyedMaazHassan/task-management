@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, auth
 from datetime import datetime
 # Create your models here.
 
@@ -17,6 +17,10 @@ class Customer(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    def __unicode__(self):
+        return f'{self.first_name}'
+
 
 
 class myTask(models.Model):

@@ -53,6 +53,10 @@
   padding: 7px;
 }
 
+.myIcon2{
+  background-color: #eeeeee;
+}
+
 .late-label{
   background-color: rgb(255, 213, 213);
   color: rgb(172, 0, 0);
@@ -176,7 +180,7 @@ body {
 hr {
   box-sizing: content-box;
   height: 0;
-  overflow: visible;
+  /* overflow: visible; */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -7444,9 +7448,9 @@ button.bg-dark:focus {
           user-select: none !important;
 }
 
-.overflow-auto {
+/* .overflow-auto {
   overflow: auto !important;
-}
+} */
 
 .overflow-hidden {
   overflow: hidden !important;
@@ -10200,9 +10204,7 @@ body {
 .sb-nav-fixed #layoutSidenav #layoutSidenav_nav .sb-sidenav {
   padding-top: 56px;
 }
-.sb-nav-fixed #layoutSidenav #layoutSidenav_nav .sb-sidenav .sb-sidenav-menu {
-  overflow-y: auto;
-}
+
 .sb-nav-fixed #layoutSidenav #layoutSidenav_content {
   padding-left: 225px;
   top: 56px;

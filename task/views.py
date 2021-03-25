@@ -7,6 +7,46 @@ from .models import *
 from datetime import datetime
 # Create your views here.
 
+# @login_required(login_url='login')
+def editText(request):
+	output = {}
+	if request.method == "GET" and request.is_ajax():
+		Type = request.GET['type']
+		Id = request.GET['id']
+		New_text = request.GET['new_text']
+
+		try:
+			Id = int(Id)
+		except:
+			output['status'] = False
+			return JsonResponse(output)
+
+		if Type in ['task', 'note']:
+			output['new_text'] = New_text
+			if Type == 'task':
+				focused_task = myTask.objects.filter(id = Id)
+				if focused_task.exists():
+					focused_task = focused_task[0]
+					focused_task.task_text = New_text
+					focused_task.save()
+					output['status'] = True
+			else:
+				focused_note = myNote.objects.filter(id = Id)
+				if focused_note.exists():
+					focused_note = focused_note[0]
+					focused_note.note_text = New_text
+					focused_note.save()
+					output['status'] = True
+		else:
+			output['status'] = False
+
+		print(Type, Id, New_text)
+		output['type'] = Type
+		output['id'] = Id
+
+	return JsonResponse(output)
+
+
 @login_required(login_url='login')
 def operation(request):
 	output = {}
@@ -65,7 +105,9 @@ def operation_note(request):
 @login_required(login_url='login')
 def customer_view(request, customer_id):
 	try:
-		context = {}
+		context = {
+			'today': datetime.now().date()
+		}
 		ID = int(customer_id)
 		if Customer.objects.filter(id = ID, added_by = request.user).exists() or ID == 0:
 			if ID == 0:
@@ -77,9 +119,16 @@ def customer_view(request, customer_id):
 				if 'newTask' in request.POST:
 					newTask = request.POST['newTask']
 					dueOn = request.POST['dueOn']
+
+					if request.POST['dueOn'] != "":
+						due_date_entered = dueOn
+					else:
+						due_date_entered = datetime.now().date()
+					# print('dueOn' in request.POST and request.POST['dueOn'])
+					
 					new_task = myTask(
 						task_text = newTask,
-						due_date = dueOn,
+						due_date = due_date_entered,
 						added_by = request.user,
 						added_for = context['my_customer']
 					)
@@ -106,7 +155,7 @@ def customer_view(request, customer_id):
 			
 			context['all_tasks'] = all_tasks
 			context['all_notes'] = all_notes
-			context['customers'] = Customer.objects.filter(added_by = request.user)
+			context['customers'] = Customer.objects.filter(added_by = request.user).order_by('first_name')
 			context['temp'] = True
 			return render(request, "task/customer.html", context)
 		else:
@@ -119,7 +168,7 @@ def customer_view(request, customer_id):
 @login_required(login_url='login')
 def index(request):
 	form=CustomerForm()
-	customers=Customer.objects.filter(added_by = request.user)
+	customers=Customer.objects.filter(added_by = request.user).order_by('first_name')
 	
 	if request.method=='POST':
 
@@ -142,6 +191,7 @@ def index(request):
 	context = {'form':form,'customers':customers}
 	context['all_tasks'] = all_tasks
 	context['customer_section'] = True
+	context['today'] = datetime.now().date()
 	return render(request,'task/index.html', context)
 
 
@@ -262,5 +312,6 @@ def delete_note(request, id):
 	return render(request, 'task/note_delete.html')
 
 
-
-	
+def logout(request):
+    auth.logout(request)
+    return redirect("home page")
