@@ -205,18 +205,16 @@ def search(request):
 
 @login_required(login_url='login')
 def index(request):
-	form=CustomerForm()
+	# form=CustomerForm()
 	customers=Customer.objects.filter(added_by = request.user).order_by('first_name')
 	
 	if request.method=='POST':
-
 		new_customer = Customer(
-			first_name = request.POST['first_name'], 
-			last_name = request.POST['last_name'],
-			email = request.POST['email'],
+			account_name = request.POST['account_name'], 
+			renewal_date = request.POST['renewal_date'],
+			revenue = request.POST['revenue'],
 			added_by = request.user
 		)
-
 		new_customer.save()
 		return redirect('home page')
 	
@@ -226,7 +224,7 @@ def index(request):
 		if task.due_date < datetime.now().date():
 			task.late_now()
 	
-	context = {'form':form,'customers':customers}
+	context = {'customers':customers}
 	context['all_tasks'] = all_tasks
 	context['customer_section'] = True
 	context['today'] = datetime.now().date()

@@ -19,11 +19,36 @@
                         {% if query_to_show %}
                             <h2 class="mt-3">Search results for <b class="text-primary">"{{ query_to_show }}"</b></h2>
                         {% else %}
-                            {% if my_customer %}
-                                <h2 class="mt-3">{{my_customer.first_name}} {{my_customer.last_name}}  </h2>
-                            {% else %}
-                                <h2 class="mt-3">Personal</h2>
-                            {% endif %}
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    {% if my_customer %}
+                                    <h2 class="mt-3">{{my_customer}} </h2>
+                                    {% else %}
+                                        <h2 class="mt-3">Personal</h2>
+                                    {% endif %}
+                                </div>
+
+                                <div class="p-3">
+                                    <div class="card">
+                                        <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
+                                        <div class="card-body">
+                                            <h5 class="my-0 card-title">Renewal Date: <b>{{ my_customer.renewal_date }}</b></h5>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-3">
+                                    <div class="card">
+                                        <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
+                                        <div class="card-body">
+                                            <h5 class="my-0 card-title">Revenue: <b>${{ my_customer.revenue }}</b></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                          
                         {% endif %}
                         <hr class="mb-2">
 
@@ -78,7 +103,7 @@
                                                 <div class="row">
                                                     <div class="col-sm-10">
                                                         <div class="form-group my-0">
-                                                            <textarea class="form-control my-0"  name="newNote" rows="3"  placeholder="Type here..." required></textarea>
+                                                            <textarea class="form-control my-0"  name="newNote" rows="13"  placeholder="Type here..." required></textarea>
                                                         </div>
                                                     </div>
         
@@ -175,9 +200,20 @@
                 </button>
                 </div>
                 <div class="modal-body p-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="exampleValue" id="exampleInput">
+                        <label class="form-check-label" for="exampleInput">
+                            Example label
+                        </label>
+                    </div>
+
                     <form method="post" >
                         {% csrf_token %}
-                        {{form | crispy}}
+                        <div class="form-group">
+                            <label for="exampleInput">Example label</label>
+                            <input type="text" class="form-control" id="exampleInput" placeholder="Example input placeholder">
+                        </div>
+
                         <input type="submit" value="submit" class="btn btn-sm btn-success ">
                     </form>
                 

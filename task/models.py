@@ -10,13 +10,19 @@ from datetime import datetime
 
 
 class Customer(models.Model):
-    first_name=models.CharField(max_length=70)
-    last_name=models.CharField(max_length=70)
-    email=models.EmailField()
+    first_name=models.CharField(max_length=70, null = True)
+    last_name=models.CharField(max_length=70, null = True)
+    email=models.EmailField(null = True)
+    account_name= models.CharField(max_length = 70, default = "No account name")
+    renewal_date = models.DateField(default = datetime.now().date())
+    revenue = models.FloatField(default = 0.0)
     added_by = models.ForeignKey(User, on_delete = models.CASCADE, null = True)
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        if self.first_name:
+            return f'{self.first_name} {self.last_name}'
+        else:
+            return self.account_name
 
     def __unicode__(self):
         return f'{self.first_name}'

@@ -19,7 +19,7 @@ class UserRegistrationForm(UserCreationForm):
 class CustomerForm(forms.ModelForm):
 	class Meta:
 		model=Customer
-		fields=['first_name','last_name','email']
+		fields=['account_name','renewal_date','revenue']
 
 
 class TaskForm(forms.ModelForm):

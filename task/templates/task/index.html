@@ -105,9 +105,9 @@
 
                                         <div class="border py-3 radius-10">
                                             <div class="d-flex px-3">
-                                                <h4 class="mb-3" style="width: 100%;">All customers</h4>
+                                                <h4 class="mb-3" style="width: 100%;">All accounts</h4>
                                                 <div class="text-right" style="width: 100%;">
-                                                    <a data-toggle="modal" data-target="#customerModel"><i class="mk-pointer text-info fas fa-plus-circle fa-2x"></i></a>
+                                                    <a data-toggle="modal" data-target="#customerModel"><i class="mk-pointer text-primary fas fa-plus-circle fa-2x"></i></a>
                                                 </div>
                                             </div>
                             
@@ -120,11 +120,10 @@
                                                                 <i class="material-icons" style="color: #8f8f8f; font-size: 50px;">account_circle</i>
                                                             </div>
                         
-                                                            <div class="col-sm-8 px-4">
+                                                            <div class="col-sm-8 px-4 d-flex align-items-center">
                                                                 <div>
                                                                     <a href="customer/{{customer.id}}" class="text-secondary" style="text-decoration: none;">
-                                                                        <h5>{{ customer.first_name }} {{ customer.last_name }}</h5>
-                                                                        {{ customer.email }}
+                                                                        <h5>{{ customer }}</h5>
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -171,18 +170,33 @@
                 <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h5 class="modal-title">Add customer</h5>
+                    <h5 class="modal-title">Add account</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     </div>
-                    <div class="modal-body p-4">
-                        <form method="post" >
-                            {% csrf_token %}
-                            {{form | crispy}}
-                            <input type="submit" value="submit" class="btn btn-sm btn-success ">
-                        </form>
+                    <div class="modal-body p-3">
+                     
                     
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Account name</label>
+                                <input type="text" class="form-control" name="account_name" aria-describedby="emailHelp" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Renewal date</label>
+                                <input type="date" class="form-control" name="renewal_date" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Revenue</label>
+                                <input type="number" min="0" pattern="0.01" class="form-control" name="revenue" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save account</button>
+                        </form>
+
                     
                     </div>
                 
