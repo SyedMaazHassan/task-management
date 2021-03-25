@@ -166,6 +166,44 @@ def customer_view(request, customer_id):
 
 
 @login_required(login_url='login')
+def search(request):
+	# try:
+		if request.method == "GET" and request.GET['query'] != "":
+			context = {
+				'today': datetime.now().date()
+			}
+			query = request.GET['query']
+
+			if len(query) > 30:
+				query_to_show = query[0: 30]+"..."
+			else:
+				query_to_show = query
+				
+			all_tasks = myTask.objects.filter(added_by = request.user, task_text__contains=query).order_by('-id')
+			all_notes = myNote.objects.filter(added_by = request.user, note_text__contains=query).order_by('-id')
+			
+			for task in all_tasks:
+				if task.due_date < datetime.now().date():
+					task.late_now()
+			
+			context['query_to_show'] = query_to_show
+			context['query'] = request.GET['query']
+			context['all_tasks'] = all_tasks
+			context['all_notes'] = all_notes
+			context['customers'] = Customer.objects.filter(added_by = request.user).order_by('first_name')
+			context['customer_section'] = True
+			context['temp'] = True
+			return render(request, "task/customer.html", context)
+		else:
+			return redirect("home page")
+	# except:
+	# 	return redirect("home page")
+
+
+
+
+
+@login_required(login_url='login')
 def index(request):
 	form=CustomerForm()
 	customers=Customer.objects.filter(added_by = request.user).order_by('first_name')

@@ -16,10 +16,14 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="container-fluid">
-                        {% if my_customer %}
-                            <h2 class="mt-3">{{my_customer.first_name}} {{my_customer.last_name}}  </h2>
+                        {% if query_to_show %}
+                            <h2 class="mt-3">Search results for <b class="text-primary">"{{ query_to_show }}"</b></h2>
                         {% else %}
-                            <h2 class="mt-3">Personal</h2>
+                            {% if my_customer %}
+                                <h2 class="mt-3">{{my_customer.first_name}} {{my_customer.last_name}}  </h2>
+                            {% else %}
+                                <h2 class="mt-3">Personal</h2>
+                            {% endif %}
                         {% endif %}
                         <hr class="mb-2">
 
@@ -30,11 +34,16 @@
 
                             <div class="col-sm-6 py-2">
 
-                                <div class="border py-2 px-3 d-flex align-items-center" style="background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
+                                <div class="border d-flex align-items-center px-3" style="height:60px; background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
                                     <h4 class="my-0"  style="width: 50%;">Notes list</h4>
-                                    <div class="form-group my-0 justify-content-end d-flex" style="width: 50%;">
-                                        <i class="material-icons myIcon text-primary bg-white mk-pointer ml-2 my-0" data-toggle="collapse" data-target="#new-note-form" title="Add note">note_add</i>
-                                    </div>
+
+                                    {% if not customer_section %}
+                                        <div class="form-group my-0 justify-content-end d-flex" style="width: 50%;">
+                                            <i class="material-icons myIcon text-primary bg-white mk-pointer ml-2 my-0" data-toggle="collapse" data-target="#new-note-form" title="Add note">note_add</i>
+                                        </div>
+                                        
+                                    {% endif %}
+                                   
                                     
                                 </div>
                                 
@@ -69,7 +78,7 @@
                                                 <div class="row">
                                                     <div class="col-sm-10">
                                                         <div class="form-group my-0">
-                                                            <input class="form-control my-0" type="text" name="newNote" placeholder="Type here..." required>
+                                                            <textarea class="form-control my-0"  name="newNote" rows="3"  placeholder="Type here..." required></textarea>
                                                         </div>
                                                     </div>
         
@@ -119,12 +128,22 @@
                                         
                                             </div>
 
+                                           
+
+
                                             {% if customer_section %}
-                                                <hr class="my-1">
+            
+                                                <!-- <hr class="my-1"> -->
                                                 <div class="text-right">
-                                                    Customer: <b>Syed Maaz Hassan</b>
+                                                    {% if note.added_for %}
+                                                        Customer: <b>{{ note.added_for }}</b>
+                                                    {% else %}
+                                                        <b>Personal</b>
+                                                    {% endif %}
                                                 </div>
+                                            
                                             {% endif %}
+                                            
                                         </div>
 
                                         {% endfor %}

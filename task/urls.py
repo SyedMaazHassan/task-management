@@ -19,7 +19,8 @@ urlpatterns = [
     path('note_delete/<int:id>/',views.delete_note,name='deletenote'),
     path('operation', views.operation, name="operation"),
     path('operation-note', views.operation_note, name="operation-note"),
-    path('editText', views.editText, name="editText")
+    path('editText', views.editText, name="editText"),
+    path('search', views.search, name="search")
 
 ]
 

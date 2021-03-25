@@ -38,7 +38,7 @@ class myTask(models.Model):
 
 	def get_status(self):
 		if self.status == 0:
-			wording = "ON GOING"
+			wording = "OPEN"
 			class_name = "on-going-label"	
 			box_class = "ongoing"
 

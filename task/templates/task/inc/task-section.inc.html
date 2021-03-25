@@ -1,4 +1,4 @@
-<div class="border py-2 px-3 d-flex align-items-center" style="background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
+<div class="border d-flex align-items-center px-3" style="height:60px; background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
     <h4 class="my-0"  style="width: 50%;">Tasks list</h4>
     <div class="form-group my-0 justify-content-end d-flex" style="width: 50%;">
         {% if all_tasks %}
@@ -7,7 +7,7 @@
             <option value="all">All tasks</option>
             <option value="complete">Completed tasks</option>
             <option value="late">Late tasks</option>
-            <option value="ongoing">Ongoing tasks</option>
+            <option value="ongoing">Open</option>
         </select>
         {% endif %}
 
@@ -91,7 +91,7 @@
                 {% if task.status != 1 %}
                     <i class="material-icons myIcon text-success mk-pointer ml-2 my-0 p-1 myIcon2 mt-1 editinginput-icon" id="edit-task-{{ task.id }}">edit</i>
                 {% endif %}
-                
+
                 <i class="material-icons myIcon text-danger mk-pointer ml-2 my-0 operation p-1 myIcon2 mt-1" id="delete_{{ task.id }}">delete</i>
 
             </div>
