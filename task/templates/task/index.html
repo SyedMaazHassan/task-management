@@ -107,20 +107,20 @@
                                             <div class="d-flex px-3">
                                                 <h4 class="mb-3" style="width: 100%;">All accounts</h4>
                                                 <div class="text-right" style="width: 100%;">
-                                                    <a data-toggle="modal" data-target="#customerModel"><i class="mk-pointer text-primary fas fa-plus-circle fa-2x"></i></a>
+                                                    <a data-toggle="modal" data-target="{% if is_dynamic_field_added %}#customerModel{% else %}#dynamicFieldForm{% endif %}"><i class="mk-pointer text-primary fas fa-plus-circle fa-2x"></i></a>
                                                 </div>
                                             </div>
                             
                             
                                             {% for customer in customers %}
                                                 <!-- <a href=""> -->
-                                                    <div class="profile-card p-3">                                                        
+                                                    <div class="profile-card px-3 py-1">                                                        
                                                         <div class="row">
-                                                            <div class="col-sm-2">
+                                                            <div class="col-sm-2 d-flex align-items-center">
                                                                 <i class="material-icons" style="color: #8f8f8f; font-size: 50px;">account_circle</i>
                                                             </div>
                         
-                                                            <div class="col-sm-8 px-4 d-flex align-items-center">
+                                                            <div class="col-sm-8 px-3 d-flex align-items-center">
                                                                 <div>
                                                                     <a href="customer/{{customer.id}}" class="text-secondary" style="text-decoration: none;">
                                                                         <h5>{{ customer }}</h5>
@@ -141,7 +141,7 @@
 
                                             {% if not customers %}
                                                 <div class="alert alert-success text-center" role="alert">
-                                                    No customer added yet.
+                                                    No account added yet.
                                                 </div>
                                             {% endif %}
                             
@@ -164,6 +164,102 @@
                
                 </div>
             </div>
+
+
+            <div class="modal fade" id="dynamicFieldForm" tabindex="-1" role="dialog" aria-labelledby="dynamicFieldForm-label" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="dynamicFieldFormTitle">Add dynamic fields</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-center alert alert-success p-1" role="alert">
+                                Underscore _ and small alphabetic characters (a-z) are allowed
+                            </div>
+                            <!--Modal content-->
+                            <table class="table table-borderless">
+                              
+                                <tbody>
+                                  <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label for="exampleInput">Field name</label>
+                                            <input type="text" class="form-control" id="dynamic-field-name">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label for="exampleSelect">Type</label>
+                                            <select class="form-control" id="dynamic-field-type">
+                                                <option value=""></option>
+                                                <option value="text">Text</option>
+                                                <option value="number">Number</option>
+                                                <option value="date">Date</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label for="exampleSelect">Required?</label>
+                                            <select class="form-control" id="dynamic-field-required">
+                                                <option value=""></option>
+                                                <option value="yes">Yes</option>
+                                                <option value="no">No</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="d-flex align-items-end">
+                                        <!-- <i class="material-icons text-danger">delete</i> -->
+                                        <div class="mt-2">
+                                            <i onclick="add_field()" class="material-icons text-primary mk-pointer mt-4 radius-100 bg-light-secondary p-2" title="Add field">add</i>
+                                        </div>
+                                    </td>
+                                  </tr>
+
+                                  <tr class="my-0 py-0">
+                                      <td colspan="4" class="my-0  py-0">
+                                        <p class="text-danger" id="dynamic-field-error"></p>
+                                      </td>
+                                  </tr>
+                                  
+                                </tbody>
+                              </table>
+                            
+
+                            <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Field name</th>
+                                    <th>Type</th>
+                                    <th>is Required?</th>
+                                    <th></th>
+                                  </tr>
+                                </thead>
+                                <tbody id="my-fields-container">
+                                  <tr class="text-center" id="empty-msg">
+                                      <td colspan="4" colspan="text-center">
+                                         <h6 class="m-4">No field added!</h6>
+                                      </td>
+                                  </tr>
+
+  
+                                  
+                                </tbody>
+                            </table>
+
+                            <p class="text-danger" id="main-d-error"></p>
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="save-field">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
          
             
             <div class="modal" tabindex="-1" role="dialog" id="customerModel">
@@ -182,20 +278,33 @@
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Account name</label>
-                                <input type="text" class="form-control" name="account_name" aria-describedby="emailHelp" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Renewal date</label>
-                                <input type="date" class="form-control" name="renewal_date" required>
+                                <input type="text" class="form-control" name="account_name_special" aria-describedby="emailHelp" required>
                             </div>
 
+                            {% for field in all_fields %}
                             <div class="form-group">
-                                <label>Revenue</label>
-                                <input type="number" min="0" pattern="0.01" class="form-control" name="revenue" required>
+                                <label>{{ field.titleName }}</label>
+                                <input type="{{ field.field_type }}" {% if field.field_type == 'number' %}min=0{% endif %} class="form-control" name="{{ field.field_name }}" {{ field.required }}>
                             </div>
+                            {% endfor %}
 
                             <button type="submit" class="btn btn-primary">Save account</button>
                         </form>
+
+                        <div class="text-center">
+
+                            <h5>OR</h5>
+
+                            <form method="POST" class="border p-3 radius-10" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-group text-left">
+                                    <label>Upload csv file</label>
+                                    <input type="file" class="border form-control-file" name="myaccountfile" id="myAccountFile" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </form>
+                        </div>
+
 
                     
                     </div>
@@ -216,3 +325,129 @@
 
 
 <script src="{% static 'task/js/edit.js' %}"></script>
+<script>
+    // sample
+    // {
+    //     'field_name': 'abc',
+    //     'type': 'text',
+    //     'required': 'no'
+    // }
+    $("#myAccountFile").change(function () {
+        var fileExtension = ['csv'];
+        if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Kindly attach CSV file only!");
+            $("#myAccountFile").val("");
+        }
+    });
+
+    var all_fields = [];
+
+    function name_found(given_name) {
+        for (let i = 0; i < all_fields.length; i++) {
+            const element = all_fields[i];
+            
+            if (element && element.field_name == given_name) {
+                return true
+            }
+        }
+        return false;
+    }
+
+    function remove_field(my_id) {
+        let id_number = parseInt(my_id);
+        all_fields[id_number] = null;
+        $(`#row-${id_number}`).remove();
+        console.log(all_fields);
+
+        if ($(".remove-field").length < 1) {
+            $("#empty-msg").css("display", "");
+        }
+    }
+    
+
+    function add_field() {
+        let dynamic_field_name = $("#dynamic-field-name").val(); 
+        let dynamic_field_type = $("#dynamic-field-type").val();
+        let dynamic_field_required = $("#dynamic-field-required").val();
+
+        if (dynamic_field_name == "" || dynamic_field_type == "" || dynamic_field_required == "") {
+            $("#dynamic-field-error").text("All fields required!"); 
+        }else{
+            if (name_found(dynamic_field_name)) {
+                $("#dynamic-field-error").text("Name already exists!"); 
+            }else{
+                $("#dynamic-field-error").text(""); 
+
+                let myRegex = /^[a-z\_]+$/g
+
+                if (dynamic_field_name.match(myRegex)) {
+                    $("#dynamic-field-error").text(""); 
+                }else{
+                    $("#dynamic-field-error").text("Name format isn't correct!"); 
+                    return false;
+                }
+
+
+
+                let myIndex = all_fields.length;
+
+                let single_field_data = {
+                    field_name: dynamic_field_name,
+                    type: dynamic_field_type,
+                    required: dynamic_field_required
+                }
+
+                $("#my-fields-container").append(
+                    `
+                    <tr id="row-${myIndex}">           
+                        <td>${dynamic_field_name}</td>
+                        <td>${dynamic_field_type}</td>
+                        <td>${dynamic_field_required}</td>
+                        <td>
+                            <i class="material-icons text-danger mk-pointer remove-field" onclick="remove_field('${myIndex}')" title="Remove this field" id="delete-${myIndex}">delete</i>
+                        </td>
+                    </tr>
+                    `
+                );
+
+                all_fields.push(single_field_data);
+
+                $("#dynamic-field-name").val(""); 
+                $("#dynamic-field-type").val("");
+                $("#dynamic-field-required").val("");
+
+                if ($(".remove-field").length > 0) {
+                    $("#main-d-error").text("");
+                    $("#empty-msg").css("display", "none");
+                }
+                
+            }
+        }
+    }
+
+    $("#save-field").on("click", function () {
+        $("#save-field").prop("disabled", true);
+        if ($(".remove-field").length > 0) {
+            $("#main-d-error").text("");
+            $.ajax({
+                url: "{% url 'addFields' %}",
+                type: "GET", 
+                data: {myFields: JSON.stringify(all_fields)},
+                success: (response)=>{
+                    if (response.status) {
+                        alert("Feilds have been added successfully!");
+                        location.reload();
+                    }else{
+                        alert("Something went wrong!");
+                        $("#save-field").prop("disabled", false);
+                    }
+                }
+            })
+        }else{
+            $("#main-d-error").text("Kindly add at least 1 field to save!");
+            $("#save-field").prop("disabled", false);
+        }
+    });
+
+
+</script>

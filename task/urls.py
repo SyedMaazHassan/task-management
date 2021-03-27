@@ -20,8 +20,8 @@ urlpatterns = [
     path('operation', views.operation, name="operation"),
     path('operation-note', views.operation_note, name="operation-note"),
     path('editText', views.editText, name="editText"),
-    path('search', views.search, name="search")
-
+    path('search', views.search, name="search"),
+    path('addFields', views.addFields, name="addFields")
 ]
 
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

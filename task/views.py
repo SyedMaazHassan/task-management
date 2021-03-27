@@ -5,9 +5,39 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import *
 from datetime import datetime
-# Create your views here.
+import json
+import csv
 
-# @login_required(login_url='login')
+# Create your views here.
+@login_required(login_url='login')
+def addFields(request):
+	output = {}
+	if request.method == "GET" and request.is_ajax():
+		try:
+			my_fields = request.GET['myFields']
+			myFieldDict = json.loads(my_fields)
+
+			for field in myFieldDict:
+				if field:
+					new_field = myField(
+						user = request.user,
+						field_name = field['field_name'],
+						field_type = field['type'],
+						is_requied = (field['required'] == 'yes')
+					)
+
+					new_field.save()
+
+			new_status = dynamicFieldStatus(user = request.user)
+			new_status.save()
+			output['status'] = True
+		except:
+			output['status'] = False
+
+	return JsonResponse(output)
+
+
+@login_required(login_url='login')
 def editText(request):
 	output = {}
 	if request.method == "GET" and request.is_ajax():
@@ -146,8 +176,18 @@ def customer_view(request, customer_id):
 					messages.error(request, "New note has been added successfully!")
 
 					# return redirect("customer/"+str(context['my_customer'].id))
-			all_tasks = myTask.objects.filter(added_by = request.user, added_for = context['my_customer']).order_by('-id')
+
+			late_tasks = list(myTask.objects.filter(added_by = request.user, added_for = context['my_customer'], status = -1))
+			bubbleSort(late_tasks)
+			open_tasks = list(myTask.objects.filter(added_by = request.user, added_for = context['my_customer'], status = 0))
+			bubbleSort(open_tasks)
+			completed_tasks = list(myTask.objects.filter(added_by = request.user, added_for = context['my_customer'], status = 1))
+			bubbleSort(completed_tasks)
+
+			all_tasks = late_tasks + open_tasks + completed_tasks
+
 			all_notes = myNote.objects.filter(added_by = request.user, added_for = context['my_customer']).order_by('-id')
+			
 			
 			for task in all_tasks:
 				if task.due_date < datetime.now().date():
@@ -164,6 +204,22 @@ def customer_view(request, customer_id):
 		return redirect("home page")
 
 
+def bubbleSort(arr):
+    n = len(arr)
+  
+    # Traverse through all array elements
+    for i in range(n-1):
+    # range(n) also work but outer loop will repeat one time more than needed.
+  
+        # Last i elements are already in place
+        for j in range(0, n-i-1):
+  
+            # traverse the array from 0 to n-i-1
+            # Swap if the element found is greater
+            # than the next element
+            if arr[j].due_date > arr[j+1].due_date :
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+
 
 @login_required(login_url='login')
 def search(request):
@@ -179,7 +235,15 @@ def search(request):
 			else:
 				query_to_show = query
 				
-			all_tasks = myTask.objects.filter(added_by = request.user, task_text__contains=query).order_by('-id')
+			late_tasks = list(myTask.objects.filter(added_by = request.user, task_text__contains=query, status = -1))
+			bubbleSort(late_tasks)
+			open_tasks = list(myTask.objects.filter(added_by = request.user, task_text__contains=query, status = 0))
+			bubbleSort(open_tasks)
+			completed_tasks = list(myTask.objects.filter(added_by = request.user, task_text__contains=query))
+			bubbleSort(completed_tasks)
+
+			all_tasks = late_tasks + open_tasks + completed_tasks
+			
 			all_notes = myNote.objects.filter(added_by = request.user, note_text__contains=query).order_by('-id')
 			
 			for task in all_tasks:
@@ -198,36 +262,108 @@ def search(request):
 			return redirect("home page")
 	# except:
 	# 	return redirect("home page")
+def is_allow(all_fields_of_user, given_headers):
+	status = True
+	for single_field in all_fields_of_user:
+		if single_field.field_name not in given_headers:
+			status = False
+			break
 
+	if 'account_name' not in given_headers:
+		status = False
 
-
+	return status
 
 
 @login_required(login_url='login')
 def index(request):
 	# form=CustomerForm()
+	context = {}
 	customers=Customer.objects.filter(added_by = request.user).order_by('first_name')
-	
+	context['all_fields'] = myField.objects.filter(user = request.user)
+
 	if request.method=='POST':
-		new_customer = Customer(
-			account_name = request.POST['account_name'], 
-			renewal_date = request.POST['renewal_date'],
-			revenue = request.POST['revenue'],
-			added_by = request.user
-		)
-		new_customer.save()
-		return redirect('home page')
+		if 'account_name_special' in request.POST:
+			new_customer = Customer(
+				account_name = request.POST['account_name_special'], 
+				added_by = request.user
+			)
+			new_customer.save()
+
+			for single_field in context['all_fields']:
+				enterd_value = request.POST[single_field.field_name]
+				print(enterd_value)
+				new_sing_field_value = myFieldValue(
+					field = single_field,
+					value = enterd_value,
+					customer = new_customer
+				)
+
+				new_sing_field_value.save()
+
+			messages.info(request, "Account has been created successfully!")
+			return redirect('home page')
+
+		else:
+			myAccountFile = request.FILES['myaccountfile']
+			file_data = myAccountFile.read().decode("utf-8")	
+			my_whole_data = []
+			lines = file_data.split("\r\n")
+			headers = lines[0].split(",")
+
+			for index in range(1,len(lines)):
+				line = lines[index]	
+				if len(line) > 3:
+					single_zip = zip(headers, line.split(","))
+					my_whole_data.append(
+						dict(single_zip)
+					)
+
+			# print(my_whole_data)
+			if is_allow(context['all_fields'], headers):
+				for single_account in my_whole_data:
+
+					new_customer = Customer(
+						account_name = single_account['account_name'], 
+						added_by = request.user
+					)
+					new_customer.save()
+
+					for single_field in context['all_fields']:
+						enterd_value = single_account[single_field.field_name]
+						new_sing_field_value = myFieldValue(
+							field = single_field,
+							value = enterd_value,
+							customer = new_customer
+						)
+
+						new_sing_field_value.save()
+
+				messages.info(request, "All accounts have been created successfully!")
+			else:
+				messages.info(request, "CSV file doesn't contain required parameters!")
+			
+			return redirect('home page')
+
 	
-	all_tasks = myTask.objects.filter(added_by = request.user).order_by('-id')
+	late_tasks = list(myTask.objects.filter(added_by = request.user, status = -1))
+	bubbleSort(late_tasks)
+	open_tasks = list(myTask.objects.filter(added_by = request.user, status = 0))
+	bubbleSort(open_tasks)
+	completed_tasks = list(myTask.objects.filter(added_by = request.user, status = 1))
+	bubbleSort(completed_tasks)
+
+	all_tasks = late_tasks + open_tasks + completed_tasks
 	
 	for task in all_tasks:
 		if task.due_date < datetime.now().date():
 			task.late_now()
 	
-	context = {'customers':customers}
+	context['customers'] = customers
 	context['all_tasks'] = all_tasks
 	context['customer_section'] = True
 	context['today'] = datetime.now().date()
+	context['is_dynamic_field_added'] = dynamicFieldStatus.objects.filter(user = request.user).exists()
 	return render(request,'task/index.html', context)
 
 

@@ -20,32 +20,46 @@
                             <h2 class="mt-3">Search results for <b class="text-primary">"{{ query_to_show }}"</b></h2>
                         {% else %}
                             <div class="d-flex align-items-center">
-                                <div>
-                                    {% if my_customer %}
-                                    <h2 class="mt-3">{{my_customer}} </h2>
-                                    {% else %}
-                                        <h2 class="mt-3">Personal</h2>
-                                    {% endif %}
-                                </div>
-
+                            
                                 <div class="p-3">
-                                    <div class="card">
+                                    <div class="card radius-10">
                                         <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
                                         <div class="card-body">
-                                            <h5 class="my-0 card-title">Renewal Date: <b>{{ my_customer.renewal_date }}</b></h5>
+                                            <h6 class="mb-2 card-title">Account:</h6>
+                                            <h5>
+                                                <b class="text-primary">
+                                                    {% if my_customer %}
+                                                        {{my_customer}}
+                                                    {% else %}
+                                                        Personal
+                                                    {% endif %}
+                                                </b>
+                                            </h5>
                                            
                                         </div>
                                     </div>
                                 </div>
 
+                                {% if my_customer %}
+
+                                {% for data in my_customer.all_data %}
+
                                 <div class="p-3">
-                                    <div class="card">
+                                    <div class="card radius-10">
                                         <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
                                         <div class="card-body">
-                                            <h5 class="my-0 card-title">Revenue: <b>${{ my_customer.revenue }}</b></h5>
+                                            <h6 class="mb-2 card-title">{{ data.field.titleName }}:</h6>
+                                            <h5><b class="text-primary">{{ data.get_value }}</b></h5>
+                                           
                                         </div>
                                     </div>
                                 </div>
+
+                                {% endfor %}
+
+                
+
+                                {% endif %}
                                
                             </div>
                           

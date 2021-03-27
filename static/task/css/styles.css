@@ -16,6 +16,10 @@
   transition-duration: 0.08s;
 }
 
+.bg-light-secondary{
+  background-color: #eeeeee;
+}
+
 .google-box:hover{
   background-color: #fdfdfd;
   box-shadow: 0 0 0 2px #0275d8;

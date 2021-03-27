@@ -26,8 +26,59 @@ class Customer(models.Model):
 
     def __unicode__(self):
         return f'{self.first_name}'
+    
+    def all_data(self):
+        all_info = myFieldValue.objects.filter(customer = self)
+        return all_info
 
+class myField(models.Model):
+	user = models.ForeignKey(User, on_delete = models.CASCADE)
+	field_name = models.CharField(max_length = 255)
+	field_type = models.CharField(max_length = 255)
+	is_requied = models.BooleanField()
 
+	def titleName(self):
+		new_name = self.field_name.replace("_", " ")
+		new_name = new_name.split(" ")
+		for i in range(len(new_name)):
+			first_letter = new_name[i][0]
+			new_name[i] = first_letter.upper() + new_name[i][1:]
+
+		return " ".join(new_name)
+
+	def required(self):
+		temp_var = ''
+		if self.is_requied:
+			temp_var = 'required'
+		return temp_var
+			
+
+class myFieldValue(models.Model):
+	field = models.ForeignKey(myField, on_delete = models.CASCADE)
+	value = models.CharField(max_length = 255, null = True)
+	customer = models.ForeignKey(Customer, on_delete = models.CASCADE)
+
+	def get_value(self):
+		if not self.value:
+			return "Not provided"
+		
+		my_value = self.value
+
+		if self.field.field_type == 'date':
+			if '/' in my_value:
+				my_value = "-".join(my_value.split("/")[::-1])
+			
+			make_date_object = datetime.strptime(my_value, "%Y-%m-%d")
+			my_value = make_date_object.date()
+
+		if self.field.field_type == 'number':
+			if len(my_value) < 10:
+				my_value = f'$ {my_value}'
+
+		return my_value
+
+class dynamicFieldStatus(models.Model):
+	user = models.ForeignKey(User, on_delete = models.CASCADE)
 
 class myTask(models.Model):
 	task_text = models.CharField(max_length = 255)
