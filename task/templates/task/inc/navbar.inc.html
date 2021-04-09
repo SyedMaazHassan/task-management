@@ -1,0 +1,53 @@
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    {% if user.is_authenticated %}
+        <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
+    {% endif %}
+    
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'home page' %}">
+        <i class="material-icons mr-2">home</i>
+        Home
+    </a>
+
+    {% if user.is_authenticated %}
+    <!-- Navbar Search-->
+    <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
+        <div class="input-group">
+            <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </form>
+    <!-- Navbar-->
+    <ul class="navbar-nav ml-auto ml-md-0">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                {% if user.is_authenticated %}
+        
+                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+            
+
+                {% else %}
+                <a class="dropdown-item" href="#">Settings</a>
+                <a class="dropdown-item" href="#">Activity Log</a>
+
+                {% endif %}
+
+                
+               
+            </div>
+        </li>
+    </ul>
+    {% else %}
+        <div style="width: 100%;" class="text-right">
+            <a href="{% url 'register-view' %}">
+                <button type="button" class="btn bg-white text-black" style="width: 100px;">Register</button>
+            </a>
+
+            <a href="{% url 'login' %}">
+                <button type="button" class="btn bg-white text-black mx-2" style="width: 100px;">login</button>
+            </a>
+        </div>
+    {% endif %}
+</nav>

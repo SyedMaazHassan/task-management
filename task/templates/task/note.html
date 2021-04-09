@@ -1,0 +1,153 @@
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% include 'task/inc/head.inc.html' %}
+
+    
+    <body class="sb-nav-fixed">
+        {% include 'task/inc/navbar.inc.html' %}
+
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                {% include 'task/inc/sidebar.inc.html' %}
+            </div>
+
+            <div id="layoutSidenav_content" >
+                <div class="row">
+                    <div class="col-lg-12 py-4">
+                        <div class="container-fluid">
+
+                            <h2>This is customer notes details </h2>
+                       <!--      <h1 class="mt-2">{{my_customer.first_name}} {{my_customer.last_name}}  </h1> -->
+
+                              
+                                  
+                           
+                               <div style="margin-left: 1100px">
+
+                                        <a href="{% url 'home page' %}" class="btn btn-success">Back to dashboard</a>
+
+
+                                      
+                                 <!--   <button class="btn btn-success btn-md">Task</button>
+                                   <button class="btn btn-primary btn-md ">Notes</button> -->
+                                </div>
+
+
+                            <br>
+
+                            
+                            <!-- <ol class="breadcrumb mb-4">
+                                <li class="breadcrumb-item active">{{my_customer.first_name}}</li>
+                            
+                            </ol> -->
+
+
+
+
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <i class="fas fa-table mr-1"></i>
+                                    DataTable Example
+                                    <a  data-toggle="modal" data-target="#noteModel" class="btn btn-primary" style="margin-left: 1100px">Add new note </a>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sr no</th>
+                                                    <th>date </th>
+                                              
+                                                    <th>Notes</th>
+                                                    <th>Update</th>
+                                                    <th>Delete</th>
+                                                    <th>Added by</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tfoot>
+                                                    <th>Sr no</th>
+                                                    <th>date </th>
+                                                  
+                                                    <th>Notes</th>
+                                                 
+                                                    <th>Update</th>
+                                                    <th>Delete</th>
+                                                    <th>Added by</th>
+                                                 
+                                                
+                                             
+                                            </tfoot>
+                                            <tbody>
+                                                {% for note in notes %}
+                                                <tr>
+                                                    <td>{{note.serial_number}}</td>
+                                                    <td>{{note.date}}</td>
+                                                 
+                                                    <td>{{note.note}}</td>
+
+                                                    <td><a href="{% url 'editnote' note.id %}"> <i class="material-icons text-success">edit</i><a></td>
+                                                 
+                                                    <td>
+                                                            <a href="{% url 'deletenote' note.id %}" style="text-decoration: none;">
+                                                                    <i class="material-icons text-danger">delete</i>
+                                                            </a>
+                                                  
+                                                    </td>
+
+                                                    <td>{{note.added_by}}</td>
+
+                                                    
+                                                </tr>
+                                           
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                    
+                    
+                    </div>
+               
+               
+                </div>
+            </div>
+         
+            
+            <div class="modal" tabindex="-1" role="dialog" id="noteModel">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title">Add note</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form method="post" >
+                            {% csrf_token %}
+                            {{form | crispy}}
+                            <input type="submit" value="submit" class="btn btn-sm btn-success ">
+                        </form>
+                    
+                    
+                    </div>
+                
+                </div>
+                </div>
+            </div>
+           
+        </div>
+        
+        {% include 'task/inc/bottomLinks.inc.html' %}
+    </body>
+
+
+</html>

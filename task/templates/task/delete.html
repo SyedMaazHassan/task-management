@@ -1,0 +1,9 @@
+{% include 'task/navbar.html' %}
+<div class="container jumbotron" style="margin-top: 150px">
+    <form method="post" action="">
+       {% csrf_token %}
+         <h1 class="text-success">Are you sure you want to delete?</h1><br>
+         <input class="btn btn-danger" type="submit" value="Yes" />
+         <a href="{% url 'task' %}"><div class="btn btn-primary">Cancel</div></a>
+    </form>
+    </div>
