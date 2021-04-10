@@ -23,7 +23,7 @@ $(".editinginput-icon").on("click", function () {
     let id = container[2];
     let focused_text_p = `#text-${type}-${id}`;
     let focused_input = `#editinginput-${type}-${id}`;
-    $(focused_input).val($(focused_text_p).text().trim());
+    $(focused_input).val($(focused_input).val().trim());
     $(focused_text_p).hide();
     $(focused_input).show();
     $(focused_input).focus();
@@ -34,10 +34,28 @@ $(".editinginput-icon").on("click", function () {
     }
 });
 
-$(".editinginput-icon").keypress(function (e) {
-    if(e.keyCode == 13 || e.key == "Enter"){
+// $(".editinginput-icon").keypress(function (e) {
+//     if(e.keyCode == 13 || e.key == "Enter"){
+//         save_changes();
+        // action_call = false;
+//     }
+// });
+
+// $(".editinginput-icon").keypress(function(event) {
+//     if (event.which == 115 && event.ctrlKey){
+//         // save_changes();
+//         alert("Ctrl + S pressed");
+//         action_call = false;
+//         return false;
+//     }
+// });
+
+$(".editinginput-icon").bind('keydown', function(e) {
+    if(e.ctrlKey && (e.which == 83)) {
+        e.preventDefault();
         save_changes();
         action_call = false;
+        return false;
     }
 });
 
@@ -56,10 +74,14 @@ function save_changes() {
                 success: (response)=>{
                     console.log(response);
                     if (response.status) {
-                        $(focused_text_p).text(response.new_text);
+                        $(focused_text_p).html(response.new_text);
                     }
                     $(focused_text_p).show();
                     $(focused_input).hide();
+                    $(`#saved-${editing_currently['type']}-${editing_currently['id']}`).show();
+                    setTimeout(() => {
+                        $(`#saved-${editing_currently['type']}-${editing_currently['id']}`).hide();
+                    }, 1000);
                 }
             });
         }

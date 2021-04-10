@@ -1,11 +1,14 @@
-<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+{% load static %}
+
+<nav class="sb-topnav navbar navbar-expand navbar-dark" style="background-color: #000000;">
     {% if user.is_authenticated %}
         <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
     {% endif %}
-    
+    <!-- Taskbuddy Alpha -->
     <a class="navbar-brand d-flex align-items-center" href="{% url 'home page' %}">
-        <i class="material-icons mr-2">home</i>
-        Taskbuddy Alpha
+        <!-- <i class="material-icons mr-2">home</i> -->
+    
+        <img src="{% static 'task/assets/img/logo.png' %}" class="my-0" style="width: 150px;" alt=""> <p>Beta</p>
     </a>
 
     {% if user.is_authenticated %}
@@ -24,6 +27,7 @@
             <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                 {% if user.is_authenticated %}
+                <a class="dropdown-item mk-pointer" data-toggle="modal" data-target="#profile">My profile</a>
                 <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
                 {% endif %}
 
@@ -44,3 +48,129 @@
         </div>
     {% endif %}
 </nav>
+
+
+<div class="modal fade" id="profile" tabindex="-1" role="dialog" aria-labelledby="profile-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileTitle">My Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        
+            <div class="modal-body">
+                <!--Modal content-->
+                <div class="radius-10 google-box text-center p-3">
+                    <div>
+                        <i class="material-icons" style="color: #8f8f8f; font-size: 70px;">account_circle</i>
+                    </div>
+
+                    <div class="row text-center">
+                        <div class="col-sm-6">
+                            <h6 class="mb-0 text-muted">Email address</h6>
+                            <h6>{{ user.email }}</h6>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <h6 class="mb-0 text-muted">Username</h6>
+                            <h6>{{ user.username }}</h6>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-primary mt-3" data-toggle="collapse" data-target="#reset-password">Reset password</button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="google-box p-3 radius-10 mt-3 collapse" id="reset-password">
+                    <form method="POST" action="{% url 'reset-password' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Current password</label>
+                            <input type="password" class="form-control p-field" name="current" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">New password</label>
+                            <input type="password" class="form-control p-field" name="new" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword2">Confirm New password</label>
+                            <input type="password" class="form-control p-field" name="confirm" required>
+                        </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="show-password">
+                            <label class="form-check-label" for="show-password">Show password</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="edit-d-fields" tabindex="-1" role="dialog" aria-labelledby="edit-d-fields-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="edit-d-fieldsTitle">Edit account fields</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="editingFields" value="1">
+                <div class="modal-body">
+                    <!--Modal content-->
+                    <table class="table table-borderless">
+                        <thead>
+                        <tr>
+                            <th>S No.</th>
+                            <th>Field</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for field in my_all_fields %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>
+                                <input class="form-control" name="field_{{field.id}}" value="{{ field.field_name }}" type="text" required>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $("#show-password").on("click", function () {
+        let this_value = $(this).prop("checked");
+        if (this_value) {
+            $(".p-field").prop("type", "text");
+        }else{
+            $(".p-field").prop("type", "password");
+        }
+    });
+</script>

@@ -1,5 +1,5 @@
-<div class="border d-flex align-items-center px-3" style="height:60px; background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
-    <h4 class="my-0"  style="width: 50%;">Tasks list</h4>
+<div class="border d-flex align-items-center px-3" style="height:50px; background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
+    <h5 class="my-0"  style="width: 50%;">Tasks list</h5>
     <div class="form-group my-0 justify-content-end d-flex" style="width: 50%;">
         {% if all_tasks %}
 
@@ -12,7 +12,7 @@
         {% endif %}
 
         {% if not customer_section %}
-            <i class="material-icons myIcon text-primary bg-white mk-pointer ml-2 my-0" data-toggle="collapse" data-target="#new-task-form" title="Add task">add_task</i>
+            <i class="material-icons myIcon text-primary bg-white mk-pointer ml-2 my-0 p-1" data-toggle="collapse" data-target="#new-task-form" title="Add task">add_task</i>
         {% endif %}
 
     </div>
@@ -33,7 +33,7 @@
 
     {% if not all_tasks %}
         <div class="alert alert-warning text-center" role="alert">
-            No task exists right now!
+            What’s next?
         </div>
     {% endif %}
 
@@ -80,13 +80,24 @@
         {% for task in all_tasks %}
 
         <div class="google-box py-1 px-3 mb-3 my-any-task {{ task.get_status.box_class }}">
-            <div class="d-flex align-items-center">
-                <h6 class="text-muted my-0" style="width: 50%;"><b>Due on:</b> {% if today == task.due_date %}Today{% else %}{{ task.due_date }}{% endif %}</h6>
-                
-                <div style="width: 50%;" class="text-right">
+            <div class="d-flex my-0 align-items-center">
+                <div class="row" style="width: 70%;">
+                    <div class="col-sm-12 d-flex align-items-center">
+                        <h6 class="text-muted my-0"><b>Due on:</b> {% if today == task.due_date %}Today{% else %}{{ task.due_date }}{% endif %}</h6>
+                        <div id="saved-task-{{ task.id }}" style="display: none;">
+                            <span class="mylabel completed-label mx-3 d-flex mx-1 align-items-center">
+                                <i class="material-icons mx-0 mr-1 px-0" style="font-size: 20px;">done</i>
+                                SAVED
+                            </span>
+                        </div>
+                    </div>
+                </div>
+               
+                <div style="width: 30%;" class="text-right">
                     <div class="spinner-border spinner-border-sm text-primary" id="spinner_{{task.id}}" style="display: none;"></div>
                     <span class="mylabel {{ task.get_status.class_name }}" id="label_{{ task.id }}">{{ task.get_status.wording }}</span>
                 </div>
+                
 
                 {% if task.status != 1 %}
                     <i class="material-icons myIcon text-success mk-pointer ml-2 my-0 p-1 myIcon2 mt-1 editinginput-icon" id="edit-task-{{ task.id }}">edit</i>
@@ -96,10 +107,10 @@
 
             </div>
 
-            <div class="row mt-0 p-1">
-                <div class="col-sm-12 d-flex px-0 py-1 align-items-center">
+            <div class="row mt-0 p-1 pt-0">
+                <div class="col-sm-12 d-flex px-0 py-0 align-items-center">
                     {% if task.status == 1 %}
-                    <i class="material-icons mk-pointer radius-100 task-completed mx-2" title="Completed">check_box</i>
+                    <i class="material-icons mk-pointer radius-100 operation task-completed mx-2" title="Completed"  id="incomplete_{{ task.id }}">check_box</i>
                     {% else %}
                     <i class="material-icons mk-pointer radius-100 operation operation-complete mx-2" id="complete_{{ task.id }}">check_box_outline_blank</i>
                     {% endif %}
@@ -176,7 +187,11 @@
         let operation = clicked_id[0];
         let number = parseInt(clicked_id[1]);
 
-        if (confirm(`Are you sure, you want to ${operation} this task?`)) {
+        if (operation == "delete" && !(confirm(`Are you sure you want to ${operation} this task?`))) {
+            return false;
+        }
+
+        if (true) {
             $.ajax({
                 url: "{% url 'operation' %}",
                 type: 'GET',
@@ -202,13 +217,19 @@
                         $(`#${clicked_id.join('_')}`).text('check_box');
                     }
                     
+                    if (operation == "incomplete") {
+                        $(`#${clicked_id.join('_')}`).removeClass('task-completed');
+                        $(`#${clicked_id.join('_')}`).addClass('operation-complete');
+                        $(`#${clicked_id.join('_')}`).text('check_box_outline_blank');
+                    }
+                    
                     $(`#spinner_${number}`).css('display', '');
                     $(`#label_${number}`).css('display', 'none');
 
                     if (response.status) {
                         setTimeout(function () {
                             location.reload();
-                        }, 2000);
+                        }, 500);
                     }
                 }
             })
@@ -227,7 +248,7 @@
             if ($(`div.my-any-task:visible`).length < 1 ) {
                 $("#task-main-message").css('display', '');
                 $("#task-main-message").addClass('alert-warning');
-                $("#task-main-message").text(`No task exists right now!`);
+                $("#task-main-message").text(`What's next!`);
             }else{
                 $("#task-main-message").css('display', 'none');
                 $("#task-main-message").removeClass('alert-warning');
@@ -238,7 +259,7 @@
             if ($(`.${selected_option}:visible`).length < 1 ) {
                 $("#task-main-message").css('display', '');
                 $("#task-main-message").addClass('alert-warning');
-                $("#task-main-message").text(`No ${selected_option} task exists right now!`);
+                $("#task-main-message").text(`No ${selected_option} task exists!`);
             }else{
                 $("#task-main-message").css('display', 'none');
                 $("#task-main-message").removeClass('alert-warning');

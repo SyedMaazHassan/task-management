@@ -1,50 +1,55 @@
 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
     <div class="sb-sidenav-menu">
         <div class="nav">
-            <div class="sb-sidenav-menu-heading">ALL ACCOUNTS</div>
+            <div class="sb-sidenav-menu-heading text-white">ALL ACCOUNTS</div>
         
 
             <div class="profile-card p-2 {% if not my_customer and temp and not query %}profile-focused{% endif %}">                                                        
                 <div class="row">
-                    <div class="col-sm-2 d-flex align-items-center">
+                    <!-- <div class="col-sm-2 d-flex align-items-center">
                         <i class="material-icons" style="color: #8f8f8f; font-size: 30px;">account_circle</i>
-                    </div>
+                    </div> -->
 
-                    <div class="col-sm-10 px-3 d-flex align-items-center">
+                    <div class="col-sm-12 px-4 d-flex align-items-center">
                         <a href="customer/0" class="my-0 text-secondary" style="text-decoration: none;">
-                            <h6>Personal</h6>
+                            <h6 class="my-0">Personal</h6>
                         </a>
                     </div>
 
                 
                 </div>
             </div>
-            
-            {% for customer in customers %}
-                <!-- <a href=""> -->
+
+            <div style="height: 72vh; overflow-y: auto; overflow-x: hidden;">
+
+                {% for customer in customers %}
                     <div class="profile-card p-2 {% if customer.id == my_customer.id %}profile-focused{% endif %}">                                                        
                         <div class="row">
-                            <div class="col-sm-2 d-flex align-items-center">
+                            <!-- <div class="col-sm-2 d-flex align-items-center">
                                 <i class="material-icons" style="color: #8f8f8f; font-size: 30px;">account_circle</i>
-                            </div>
+                            </div> -->
 
-                            <div class="col-sm-10 px-3 d-flex align-items-center">
+                            <div class="col-sm-12 px-4 d-flex align-items-center">
                                 <a href="customer/{{customer.id}}" class="my-0 text-secondary" style="text-decoration: none;">
-                                    <h6>{{ customer }}</h6>
+                                    <h6 class="my-0">{{ customer }}</h6>
                                 </a>
                             </div>
-
-                        
                         </div>
                     </div>
-                <!-- </a> -->
-            {% endfor %}
+                {% endfor %}
 
-            {% if not customers %}
-                <div class="alert alert-success text-center" role="alert">
-                    No account added yet.
-                </div>
-            {% endif %}
+                
+
+
+                {% if not customers %}
+                    <div class="alert alert-success text-center" role="alert">
+                        No account added yet.
+                    </div>
+                {% endif %}
+
+            </div>
+            
+
 
 
             <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">

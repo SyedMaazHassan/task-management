@@ -71,7 +71,7 @@ class myFieldValue(models.Model):
 			make_date_object = datetime.strptime(my_value, "%Y-%m-%d")
 			my_value = make_date_object.date()
 
-		if self.field.field_type == 'number':
+		if self.field.field_type == 'number' and self.field.field_name.lower() != "age":
 			if len(my_value) < 10:
 				my_value = f'$ {my_value}'
 
@@ -100,7 +100,7 @@ class myTask(models.Model):
 			box_class = "ongoing"
 
 		if self.status == -1:
-			wording = "OH LATE"
+			wording = "OVERDUE"
 			class_name = "late-label"
 			box_class = "late"
 
@@ -120,6 +120,11 @@ class myTask(models.Model):
 		self.completed_at = datetime.now()
 		self.save()
 
+	def incomplete_now(self):
+		self.status = 0
+		self.completed_at = None
+		self.save()
+
 	def late_now(self):
 		if self.status != 1:
 			self.status = -1
@@ -133,7 +138,8 @@ class myNote(models.Model):
 	added_by = models.ForeignKey(User, on_delete = models.CASCADE)
 	added_for = models.ForeignKey(Customer, on_delete = models.CASCADE, null = True)
 	
-
+	def text_with_line(self):
+		return self.note_text.replace("\n", "<br>")
 
 class Task(models.Model):
  	task_due_date= models.DateTimeField(auto_now_add=True)

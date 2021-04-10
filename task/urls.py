@@ -21,7 +21,8 @@ urlpatterns = [
     path('operation-note', views.operation_note, name="operation-note"),
     path('editText', views.editText, name="editText"),
     path('search', views.search, name="search"),
-    path('addFields', views.addFields, name="addFields")
+    path('addFields', views.addFields, name="addFields"),
+    path('reset-password', views.reset_password, name="reset-password")
 ]
 
 urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

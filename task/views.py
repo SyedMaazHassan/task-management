@@ -2,11 +2,37 @@ from django.shortcuts import render,redirect
 from .forms import UserRegistrationForm,CustomerForm,TaskForm,NoteForm
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from .models import *
 from datetime import datetime
 import json
 import csv
+
+
+@login_required(login_url='login')
+def reset_password(request):
+	if request.method == "POST":
+		current_password = request.POST['current']
+		new_password = request.POST['new']
+		confirm_new_password = request.POST['confirm']
+
+		if check_password(current_password, request.user.password):
+			if new_password == confirm_new_password:
+				request.user.set_password(new_password)
+				request.user.save()
+				messages.error(request, "Your password has been changed successfully!")
+				
+			else:
+				messages.error(request, "New password and confirm password fields doesn't match!")
+		else:
+			messages.error(request, "Current password is not correct!")
+		return redirect("home page")
+	else:
+		return redirect("home page")
+
+
+
 
 # Create your views here.
 @login_required(login_url='login')
@@ -52,7 +78,6 @@ def editText(request):
 			return JsonResponse(output)
 
 		if Type in ['task', 'note']:
-			output['new_text'] = New_text
 			if Type == 'task':
 				focused_task = myTask.objects.filter(id = Id)
 				if focused_task.exists():
@@ -60,6 +85,7 @@ def editText(request):
 					focused_task.task_text = New_text
 					focused_task.save()
 					output['status'] = True
+					output['new_text'] = New_text
 			else:
 				focused_note = myNote.objects.filter(id = Id)
 				if focused_note.exists():
@@ -67,6 +93,7 @@ def editText(request):
 					focused_note.note_text = New_text
 					focused_note.save()
 					output['status'] = True
+					output['new_text'] = focused_note.text_with_line()
 		else:
 			output['status'] = False
 
@@ -95,7 +122,11 @@ def operation(request):
 				elif sign == "complete":
 					focused_task.complete_now()
 					output['status'] = True
-					output['message'] = "Task is being marked as completed..."
+					output['message'] = "Task is being marked as complete..."
+				elif sign == "incomplete":
+					focused_task.incomplete_now()
+					output['status'] = True
+					output['message'] = "Task is being marked as incomplete..."
 			else:
 				output['status'] = False
 				output['message'] = "This task doesn't belong to you"
@@ -189,6 +220,9 @@ def customer_view(request, customer_id):
 			all_notes = myNote.objects.filter(added_by = request.user, added_for = context['my_customer']).order_by('-id')
 			
 			
+			for i in all_notes:
+				print(i.text_with_line())
+
 			for task in all_tasks:
 				if task.due_date < datetime.now().date():
 					task.late_now()
@@ -262,17 +296,46 @@ def search(request):
 			return redirect("home page")
 	# except:
 	# 	return redirect("home page")
-def is_allow(all_fields_of_user, given_headers):
-	status = True
-	for single_field in all_fields_of_user:
-		if single_field.field_name not in given_headers:
-			status = False
-			break
 
-	if 'account_name' not in given_headers:
+def find_index(user_field, given_headers):
+	given_headers = list(map(lambda x: x.lower(), given_headers))
+	searched_index = None
+	for i in range(len(given_headers)):
+		if user_field.lower() in given_headers[i]:
+			searched_index = i
+			break
+	return searched_index
+
+def is_allow(all_fields_of_user, given_headers):
+	searched_index = None
+	name_related_field = None
+	status = True
+	replica = list(map(lambda x: x.lower(), given_headers))
+	print(given_headers)
+
+	condition1 = ("account" in replica)
+	condition2 = ("account name" in replica)
+	condition3 = ("account_name" in replica)
+
+	if condition1 or condition2 or condition3:
+		for i in range(len(replica)):
+			if "account" in replica[i]:
+				searched_index = i
+				break
+		
+		status = True
+			
+		for single_field in all_fields_of_user:
+			if single_field.field_name.lower() not in replica:
+				status = False
+				break
+	else:
 		status = False
 
-	return status
+	return {
+		"status": status,
+		"name_field_index": searched_index
+	}
 
 
 @login_required(login_url='login')
@@ -304,6 +367,18 @@ def index(request):
 			messages.info(request, "Account has been created successfully!")
 			return redirect('home page')
 
+		if 'editingFields' in request.POST:
+			for i, j in request.POST.items():
+				if "_" in i:
+					field_id = int(i.split("_")[1])
+					focused_field = myField.objects.filter(id = field_id)
+					if focused_field.exists():
+						focused_field = focused_field[0]
+						focused_field.field_name = j
+						focused_field.save()
+						# print(field_id, "=>", j)
+
+			messages.error(request, "Account field names has been updated!")
 		else:
 			myAccountFile = request.FILES['myaccountfile']
 			file_data = myAccountFile.read().decode("utf-8")	
@@ -319,18 +394,20 @@ def index(request):
 						dict(single_zip)
 					)
 
-			# print(my_whole_data)
-			if is_allow(context['all_fields'], headers):
+
+			print(my_whole_data)
+			conditioning = is_allow(context['all_fields'], headers) 
+			if conditioning['status']:
 				for single_account in my_whole_data:
 
 					new_customer = Customer(
-						account_name = single_account['account_name'], 
+						account_name = single_account[headers[conditioning['name_field_index']]], 
 						added_by = request.user
 					)
 					new_customer.save()
 
 					for single_field in context['all_fields']:
-						enterd_value = single_account[single_field.field_name]
+						enterd_value = single_account[headers[find_index(single_field.field_name, headers)]]
 						new_sing_field_value = myFieldValue(
 							field = single_field,
 							value = enterd_value,
@@ -364,6 +441,7 @@ def index(request):
 	context['customer_section'] = True
 	context['today'] = datetime.now().date()
 	context['is_dynamic_field_added'] = dynamicFieldStatus.objects.filter(user = request.user).exists()
+	context['my_all_fields'] = myField.objects.filter(user = request.user)
 	return render(request,'task/index.html', context)
 
 

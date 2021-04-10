@@ -17,16 +17,16 @@
                 <div class="col-lg-12">
                     <div class="container-fluid">
                         {% if query_to_show %}
-                            <h2 class="mt-3">Search results for <b class="text-primary">"{{ query_to_show }}"</b></h2>
+                            <h2 class="mt-2">Search results for <b class="text-primary">"{{ query_to_show }}"</b></h2>
                         {% else %}
                             <div class="d-flex align-items-center">
                             
-                                <div class="p-3">
-                                    <div class="card radius-10">
+                                <div class="pt-3 mr-3 py-0">
+                                    <div class="card radius-10 py-0">
                                         <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
-                                        <div class="card-body">
-                                            <h6 class="mb-2 card-title">Account:</h6>
-                                            <h5>
+                                        <div class="card-body py-2 px-3 profile-card">
+                                            <h6 class="my-0 mb-2 card-title">Account:</h6>
+                                            <h6 class="my-0">
                                                 <b class="text-primary">
                                                     {% if my_customer %}
                                                         {{my_customer}}
@@ -34,7 +34,7 @@
                                                         Personal
                                                     {% endif %}
                                                 </b>
-                                            </h5>
+                                            </h6>
                                            
                                         </div>
                                     </div>
@@ -44,12 +44,12 @@
 
                                 {% for data in my_customer.all_data %}
 
-                                <div class="p-3">
+                                <div class="pt-3 mr-3">
                                     <div class="card radius-10">
                                         <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
-                                        <div class="card-body">
-                                            <h6 class="mb-2 card-title">{{ data.field.titleName }}:</h6>
-                                            <h5><b class="text-primary">{{ data.get_value }}</b></h5>
+                                        <div class="card-body py-2 px-3 profile-card">
+                                            <h6 class="my-0 mb-2 card-title">{{ data.field.titleName }}:</h6>
+                                            <h6 class="my-0"><b class="text-primary">{{ data.get_value }}</b></h6>
                                            
                                         </div>
                                     </div>
@@ -73,12 +73,12 @@
 
                             <div class="col-sm-6 py-2">
 
-                                <div class="border d-flex align-items-center px-3" style="height:60px; background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
-                                    <h4 class="my-0"  style="width: 50%;">Notes list</h4>
+                                <div class="border d-flex align-items-center px-3" style="height:50px; background-color: #eeeeee; border-radius: 10px 10px 0px 0px;">
+                                    <h5 class="my-0"  style="width: 50%;">Notes list</h5>
 
                                     {% if not customer_section %}
                                         <div class="form-group my-0 justify-content-end d-flex" style="width: 50%;">
-                                            <i class="material-icons myIcon text-primary bg-white mk-pointer ml-2 my-0" data-toggle="collapse" data-target="#new-note-form" title="Add note">note_add</i>
+                                            <i class="material-icons myIcon text-primary bg-white mk-pointer ml-2 my-0 p-1" data-toggle="collapse" data-target="#new-note-form" title="Add note">note_add</i>
                                         </div>
                                         
                                     {% endif %}
@@ -99,7 +99,7 @@
 
                                     {% if not all_notes %}
                                         <div class="alert alert-warning text-center" role="alert">
-                                            No task exists right now!
+                                            Jot it down here!
                                         </div>
                                     {% endif %}
 
@@ -139,29 +139,39 @@
                                         {% for note in all_notes %}
 
                                         <div class="google-box py-1 px-3 mb-3">
-                                            <div class="d-flex align-items-center">
-                                                <h6 class="text-muted my-0" style="width: 50%;"><b>Created on:</b> {{ note.created_on.date }}</h6>
-                                                
-                                                <div style="width: 50%;" class="text-right">
-                                                    <div class="spinner-border spinner-border-sm text-primary" id="spinnernote_{{note.id}}" style="display: none;"></div>
-                                                </div>
+                                            <div class="row">
+                                                <div class="col-sm-7 d-flex align-items-center">
+                                                    <h6 class="text-muted my-0"><b>Created on:</b> {{ note.created_on.date }} </h6>
+                                                    <div style="display: none;" id="saved-note-{{ note.id }}">
+                                                        <span class="mylabel completed-label d-flex mx-3 align-items-center">
+                                                            <i class="material-icons mx-0 mr-1 px-0" style="font-size: 20px;">done</i>
+                                                            SAVED
+                                                        </span>
+                                                    </div>
 
-                                                <i class="material-icons myIcon text-success mk-pointer ml-2 my-0 p-1 myIcon2 mt-1 editinginput-icon" id="edit-note-{{ note.id }}">edit</i>
-                                                <i class="material-icons myIcon text-danger mk-pointer mt-1 ml-2 my-0 p-1 operation-note myIcon2" id="delete_{{ note.id }}">delete</i>
+                                                </div>
+                                             
+                                                <div class="col-sm-5 d-flex justify-content-end align-items-center">
+                                                    <div class="spinner-border spinner-border-sm text-primary" id="spinnernote_{{note.id}}" style="display: none;"></div>
+                                                    <i class="material-icons myIcon text-success mk-pointer ml-2 my-0 p-1 myIcon2 mt-1 editinginput-icon" id="edit-note-{{ note.id }}">edit</i>
+                                                    <i class="material-icons myIcon text-danger mk-pointer mt-1 ml-2 my-0 p-1 operation-note myIcon2" id="delete_{{ note.id }}">delete</i>
+                                                </div>
+                                                <!-- <div style="width: 50%;" class="text-right"> -->
+                                                <!-- </div> -->
+
                                             </div>
                                             <!-- <small>12, March 2020</small> -->
-                                            <div class="row mt-0 p-1">
+                                            <div class="row mt-0 py-0 my-0">
                                                 
-
                                                 <div class="col-sm-12 col-12 d-flex align-items-center">
 
 
-                                                    <textarea class="form-control mb-2 mt-2 mx-0 editinginput-icon mx-2" rows="2"  onfocusout="save_changes()" id="editinginput-note-{{ note.id }}" style="display: none;" placeholder="Type here..." type="text">
-                                                       
+                                                    <textarea class="form-control mb-2 mt-2 mx-0 editinginput-icon mx-2" rows="6"  onfocusout="save_changes()" id="editinginput-note-{{ note.id }}" style="display: none;" placeholder="Type here..." type="text">
+                                                       {{ note.note_text }}
                                                     </textarea>
 
                                                     <p class="m-0"  id="text-note-{{ note.id }}" style="font-size: 16px; line-height: 26px;">
-                                                        {{ note.note_text }}
+                                                        {{ note.text_with_line | safe }}
                                                     </p>
                                                 </div>
                                         

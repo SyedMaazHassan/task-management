@@ -17,9 +17,35 @@
                     <div class="col-lg-12">
                         <div class="container-fluid">
         
-                            <h2 class="mt-3">Dashboard</h2>
+                            <div class="row my-2">
+                                <div class="col-sm-10 py-0 my-0 d-flex align-items-center">
+                                    <h4 class="">Dashboard</h4>
+                                </div>
+
+                                <div class="col-sm-2 my-0 d-flex align-items-center">
+                                    {% if is_dynamic_field_added %}
+                                        <button type="button" data-toggle="modal" data-target="#edit-d-fields" class="btn d-flex align-items-center btn-primary btn-block">
+                                            <i class="material-icons mr-2">edit</i>
+                                            Edit account fields
+                                        </button>
+                                    {% endif %}
+                                    <!-- <a class="dropdown-item my-0 py-0 mk-pointer" data-toggle="modal" data-target="#reset-password">Edit dynamic fields</a> -->
+
+                                </div>
+                            </div>
         
-                            <hr class="mb-2">
+                            <hr class="my-1">
+
+                            {% for message in messages %}
+                                {% if message.tags == "error" %}
+                                    <div class="alert alert-warning text-center alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
 
                             <div class="row">
                                 
@@ -105,45 +131,49 @@
 
                                         <div class="border py-3 radius-10">
                                             <div class="d-flex px-3">
-                                                <h4 class="mb-3" style="width: 100%;">All accounts</h4>
+                                                <h5 class="mb-2" style="width: 100%;">All accounts</h5>
                                                 <div class="text-right" style="width: 100%;">
-                                                    <a data-toggle="modal" data-target="{% if is_dynamic_field_added %}#customerModel{% else %}#dynamicFieldForm{% endif %}"><i class="mk-pointer text-primary fas fa-plus-circle fa-2x"></i></a>
+                                                    <a data-toggle="modal" data-target="{% if is_dynamic_field_added %}#customerModel{% else %}#dynamicFieldForm{% endif %}">
+                                                        <i class="material-icons myIcon text-primary mk-pointer ml-2 my-0 p-1 myIcon2">add</i>
+                                                    </a>
                                                 </div>
                                             </div>
                             
                             
-                                            {% for customer in customers %}
-                                                <!-- <a href=""> -->
-                                                    <div class="profile-card px-3 py-1">                                                        
-                                                        <div class="row">
-                                                            <div class="col-sm-2 d-flex align-items-center">
-                                                                <i class="material-icons" style="color: #8f8f8f; font-size: 50px;">account_circle</i>
-                                                            </div>
-                        
-                                                            <div class="col-sm-8 px-3 d-flex align-items-center">
-                                                                <div>
-                                                                    <a href="customer/{{customer.id}}" class="text-secondary" style="text-decoration: none;">
-                                                                        <h5>{{ customer }}</h5>
+                                            <div style="height: 68vh; overflow-y: auto; overflow-x: hidden;">
+
+                                                {% for customer in customers %}
+                                                
+                                                        <div class="profile-card p-2">                                                        
+                                                            <div class="row px-2">
+                                                            
+                            
+                                                                <div class="col-sm-10 px-3 d-flex align-items-center">
+                                                                    <div>
+                                                                        <a href="customer/{{customer.id}}" class="text-secondary" style="text-decoration: none;">
+                                                                            <h6 class="my-0">{{ customer }}</h6>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-sm-2 justify-content-end d-flex align-items-center text-danger mk-pointer">
+                                                                    <a href="delete_items/{{ customer.id }}/" style="text-decoration: none;">
+                                                                        <i class="material-icons myIcon text-danger mk-pointer ml-2 my-0 p-1 myIcon2 mt-1">delete</i>
                                                                     </a>
                                                                 </div>
+                                                            
                                                             </div>
-
-                                                            <div class="col-sm-2 d-flex align-items-center text-danger mk-pointer">
-                                                                <a href="delete_items/{{ customer.id }}/" style="text-decoration: none;">
-                                                                    <i class="material-icons text-danger">delete</i>
-                                                                </a>
-                                                            </div>
-                                                        
                                                         </div>
-                                                    </div>
-                                                <!-- </a> -->
-                                            {% endfor %}
 
-                                            {% if not customers %}
-                                                <div class="alert alert-success text-center" role="alert">
-                                                    No account added yet.
-                                                </div>
-                                            {% endif %}
+                                                {% endfor %}
+
+                                                {% if not customers %}
+                                                    <div class="alert alert-success text-center" role="alert">
+                                                        No account added yet.
+                                                    </div>
+                                                {% endif %}
+
+                                            </div>
                             
                                             
                                         </div>
@@ -177,7 +207,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="text-center alert alert-success p-1" role="alert">
-                                Underscore _ and small alphabetic characters (a-z) are allowed
+                                Alphabetic characters (a-z / A-Z) are allowed
                             </div>
                             <!--Modal content-->
                             <table class="table table-borderless">
@@ -380,12 +410,12 @@
 
                 let myRegex = /^[a-z\_]+$/g
 
-                if (dynamic_field_name.match(myRegex)) {
+                // if (dynamic_field_name.match(myRegex)) {
                     $("#dynamic-field-error").text(""); 
-                }else{
-                    $("#dynamic-field-error").text("Name format isn't correct!"); 
-                    return false;
-                }
+                // }else{
+                //     $("#dynamic-field-error").text("Name format isn't correct!"); 
+                //     return false;
+                // }
 
 
 
