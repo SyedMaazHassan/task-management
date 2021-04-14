@@ -106,7 +106,7 @@
                                     <div class="alert text-center" id="note-main-message" style="display: none;" role="alert"></div>
 
                                     <div class="mb-3 radius-10 collapse" id="new-note-form" style="border: solid 2px #0275d8;">
-                                        <form method="POST" id="task-form">
+                                        <form method="POST" id="note-form">
                                             {% csrf_token %}
                                             <div class="py-2 px-3 d-flex align-items-center" style="background-color: #f7f7f7; border-radius: 10px 10px 0px 0px;">
                                                 <h5 class="my-0"  style="width: 50%;">New note</h5>
@@ -117,7 +117,7 @@
                                                 <div class="row">
                                                     <div class="col-sm-10">
                                                         <div class="form-group my-0">
-                                                            <textarea class="form-control my-0"  name="newNote" rows="13"  placeholder="Type here..." required></textarea>
+                                                            <textarea class="form-control my-0" id="newNote" name="newNote" rows="13"  placeholder="Type here..." required></textarea>
                                                         </div>
                                                     </div>
         
@@ -255,6 +255,23 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
+
+    $("#newNote").on("keyup", function () {
+        sessionStorage.setItem("note", $(this).val()); 
+    });
+
+    let my_saved_note = sessionStorage.getItem("note");
+
+    if (my_saved_note && my_saved_note.length > 0) {
+        $("#newNote").val(my_saved_note);
+        $("#new-note-form").addClass("show");   
+    }
+
+    $("#note-form").on("submit", function () {
+        sessionStorage.setItem("note", ""); 
+        return true;
+    });
+
     
     $(".operation-note").on("click", function () {
         let clicked_id = this.id.split("_");

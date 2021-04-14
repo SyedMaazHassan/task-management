@@ -57,7 +57,7 @@
                 <div class="row">
                     <div class="col-sm-10">
                         <div class="form-group my-0">
-                            <input class="form-control my-0" type="text" name="newTask" placeholder="Type here..." required>
+                            <input class="form-control my-0" type="text" name="newTask" id="newTask" placeholder="Type here..." required>
                             <small id="task-error" class="text-danger"></small>
                         </div>
                     </div>
@@ -169,6 +169,24 @@
             return true
         }
     }
+
+    $("#newTask").on("keyup", function () {
+        console.log($(this).val());
+        sessionStorage.setItem("task", $(this).val()); 
+    });
+
+    let my_saved_task = sessionStorage.getItem("task");
+
+    if (my_saved_task && my_saved_task.length > 0) {
+        $("#newTask").val(my_saved_task);
+        $("#new-task-form").addClass("show");
+    }
+
+    
+    $("#task-form").on("submit", function () {
+        sessionStorage.setItem("task", ""); 
+        return true;
+    });
 
     $("#dueOn").on('change', function () {
         show_error();
